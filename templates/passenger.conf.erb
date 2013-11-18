@@ -1,5 +1,7 @@
 # The Passanger Apache module configuration file is being
 # managed by Puppet and changes will be overwritten.
+#
+LoadModule passenger_module <%= scope['::rvm::passenger::apache::gempath'] %>/passenger-<%= scope['::rvm::passenger::gem::version'] %>/buildout/apache2/mod_passenger.so
 <IfModule mod_passenger.c>
   PassengerRoot <%= @passenger_root %>
   PassengerRuby <%= @passenger_ruby %>
