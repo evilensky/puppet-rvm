@@ -23,21 +23,52 @@ class rvm::passenger::apache(
 
   # build the Apache module
   # different passenger versions put the built module in different places (ext, libout, buildout)
-  include apache::dev
+  #  include apache::dev
   exec { 'passenger-install-apache2-module':
     command     => "${rvm::passenger::apache::binpath}rvm ${rvm::passenger::apache::ruby_version} exec passenger-install-apache2-module -a",
     unless      => "test -f ${gemroot}/ext/apache2/mod_passenger.so || test -f ${gemroot}/libout/apache2/mod_passenger.so || test -f ${gemroot}/buildout/apache2/mod_passenger.so",
     environment => [ 'HOME=/root', ],
     path        => '/usr/bin:/usr/sbin:/bin',
-    require     => Class['rvm::passenger::gem','apache::dev'],
+    require     => Class['rvm::passenger::gem'],
   }
 
-  class { 'apache::mod::passenger':
+  class { 'rvm::mod::passenger':
     passenger_root           => $gemroot,
     passenger_ruby           => "${rvm_prefix}/rvm/wrappers/${ruby_version}/ruby",
     passenger_max_pool_size  => $maxpoolsize,
     passenger_pool_idle_time => $poolidletime,
     require                  => Exec['passenger-install-apache2-module'],
     subscribe                => Exec['passenger-install-apache2-module'],
+  }
+}
+
+class rvm::mod::passenger (
+  $passenger_high_performance = undef,
+  $passenger_pool_idle_time = undef,
+  $passenger_max_requests = undef,
+  $passenger_stat_throttle_rate = undef,
+  $rack_autodetect = undef,
+  $rails_autodetect = undef,
+  $passenger_root = undef,
+  $passenger_ruby = undef,
+  $passenger_max_pool_size = undef,
+  $passenger_use_global_queue = undef,
+) {
+# Template uses:
+# - $passenger_root
+# - $passenger_ruby
+# - $passenger_max_pool_size
+# - $passenger_high_performance
+# - $passenger_max_requests
+# - $passenger_stat_throttle_rate
+# - $passenger_use_global_queue
+# - $rack_autodetect
+# - $rails_autodetect
+  file { 'passenger.conf':
+    ensure => file,
+    path => "/etc/httpd/conf.d/passenger.conf",
+    content => template('rvm/passenger.conf.erb'),
+    require => Package['httpd'],
+    notify => Service['httpd'],
   }
 }
