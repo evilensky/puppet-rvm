@@ -1,5 +1,7 @@
 class rvm($version=undef, $install_rvm=true) {
 
+  include rvm::rubies
+
   if $install_rvm {
     class { 'rvm::dependencies': }
 
