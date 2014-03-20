@@ -6,6 +6,8 @@ LoadModule passenger_module <%= @gempath %>/passenger-<%= @version %>/<%= @objdi
   PassengerMaxPoolSize <%= @maxpoolsize %>
   PassengerPoolIdleTime <%= @poolidletime %>
   PassengerMaxInstancesPerApp <%= @maxinstancesperapp %>
+  PassengerFriendlyErrorPages off
+
 <% if @version >= '3.0.0' %>
   PassengerMinInstances <%= @mininstances %>
   PassengerSpawnMethod <%= @spawnmethod %>
