@@ -29,4 +29,5 @@ LoadModule passenger_module <%= scope['::rvm::passenger::apache::gempath'] %>/pa
   <%- if @passenger_use_global_queue -%>
   PassengerUseGlobalQueue <%= @passenger_use_global_queue %>
   <%- end -%>
+  PassengerFriendlyErrorPages off
 </IfModule>
