@@ -6,6 +6,9 @@ class rvm::dependencies::centos {
   }
 
   case $version {
+    /^7\..*/: {
+      ensure_packages(['libcurl-devel'])
+    }
     /^6\..*/: {
       ensure_packages(['libcurl-devel'])
     }
