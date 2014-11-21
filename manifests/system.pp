@@ -6,7 +6,14 @@ class rvm::system($version=undef) {
     default   => $version,
   }
 
-  exec { 'system-rvm':
+  exec { 'system-rvm-gpg-key':
+    command => 'gpg2 --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3',
+    path => '/usr/bin:/usr/sbin:/bin',
+    environment => 'HOME=/root',
+    unless => 'gpg2 --list-keys D39DC0E3',
+    } ->
+
+    exec { 'system-rvm':
     path    => '/usr/bin:/usr/sbin:/bin',
     command => "bash -c '/usr/bin/curl -L -k https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer -o /tmp/rvm-installer && \
                 chmod +x /tmp/rvm-installer && \
