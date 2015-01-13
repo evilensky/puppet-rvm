@@ -7,7 +7,7 @@ class rvm::system($version=undef) {
   }
 
   exec { 'system-rvm-gpg-key':
-    command => 'gpg2 --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3',
+    command => 'gpg2 --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3',
     path => '/usr/bin:/usr/sbin:/bin',
     environment => 'HOME=/root',
     unless => 'gpg2 --list-keys D39DC0E3',
@@ -35,9 +35,11 @@ class rvm::system($version=undef) {
         message => "RVM updating to version ${version}",
       } ->
       exec { 'system-rvm-get':
-        path    => '/usr/local/rvm/bin:/usr/bin:/usr/sbin:/bin',
-        command => "rvm get ${version}",
-        before  => Exec['system-rvm'], # so it doesn't run after being installed the first time
+        path        => '/usr/local/rvm/bin:/usr/bin:/usr/sbin:/bin',
+        environment => 'HOME=/root',
+        command     => "rvm get ${version}",
+        before      => Exec['system-rvm'], # so it doesn't run after being installed the first time
+        require     => Exec['system-rvm-gpg-key'],
       }
     }
   }
